@@ -5,25 +5,31 @@ using UnityEngine.Networking;
 using System.Threading;
 using System.Collections.Generic;
 
-public class DrawCardButton : MonoBehaviour {
+public class DrawCardButton : NetworkBehaviour {
 
     public GameObject cardPrefab;
 
-    /// <summary>
-    /// Method finds local game object and calls a player instance card draw method.
-    /// </summary>
     public void DrawNewCard()
     {
         GameObject[] bothPlayerInstaces = GameObject.FindGameObjectsWithTag("Player");
         foreach (var singleInstance in bothPlayerInstaces)
         {
-            NetworkBehaviour networkObject = singleInstance.GetComponent<NetworkBehaviour>();
-            if(networkObject.isLocalPlayer)
+            ServerLogic sOperator = singleInstance.GetComponent<ServerLogic>();
+            if (sOperator.isLocalPlayer)
             {
-                PlayerInstance playerInstanceScript = singleInstance.GetComponent<PlayerInstance>();
-                playerInstanceScript.DrawCardButton();
+                sOperator.ActivateHeroPower();
             }
         }
+        //if (serverOperator == null)
+        //{
+        //    serverOperator = GameObject.FindGameObjectsWithTag("ServerManager");
+        //}
+
+        //serverOperator.ActivateHeroPower();
+
+       // GameObject cardObject = (GameObject)Instantiate(cardPrefab);
+      //  cardObject.transform.SetParent(locator.OwnHand.transform);
+
     }
 
 }

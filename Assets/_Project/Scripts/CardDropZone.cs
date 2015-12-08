@@ -7,8 +7,6 @@ public enum CardDropZoneTypes
 {
     MyHand,
     MyField,
-    OpponentHand,
-    OpponentField,
     None
 }
 
@@ -23,13 +21,24 @@ public class CardDropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, I
             Debug.Log("Can't drop here");
             return;
         }
-        Debug.Log(eventData.pointerDrag.name + "was dropped to" + gameObject.name);
 
-        DraggableCard d = eventData.pointerDrag.GetComponent<DraggableCard>();
-        if(d != null)
+        Debug.Log(eventData.pointerDrag.name + "was dropped to" + gameObject.name);
+        //DraggableCard d = eventData.pointerDrag.GetComponent<DraggableCard>();
+        //if(d != null)
+        //{
+        //    d.parentToReturnTo = this.transform;
+        //}
+
+        GameObject[] bothPlayerInstaces = GameObject.FindGameObjectsWithTag("Player");
+        foreach (var singleInstance in bothPlayerInstaces)
         {
-            d.parentToReturnTo = this.transform;
+            ServerLogic sOperator = singleInstance.GetComponent<ServerLogic>();
+            if (sOperator.isLocalPlayer)
+            {
+                sOperator.PlayCardFromHandToField(0, 0); // temp
+            }
         }
+
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -64,6 +73,8 @@ public class CardDropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, I
         DraggableCard d = eventData.pointerDrag.GetComponent<DraggableCard>();
         if (d != null && d.placeholderParent == this.transform)
         {
+            GameCardManager man = eventData.pointerDrag.GetComponent<GameCardManager>();
+            man.putOnBoard();
             d.placeholderParent = d.parentToReturnTo;
         }
     }
